@@ -1,9 +1,9 @@
 #!/bin/bash
 
 if [ -n "$1" ]; then
-    $version=$1
+    version=$1
 else
-    $version="indigo"
+    version="kinetic"
 fi
 
 source /opt/ros/$version/setup.bash
