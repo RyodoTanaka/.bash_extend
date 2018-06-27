@@ -2,7 +2,7 @@
 ######################################
 ## 引数に取得したいコンテナIDが必要 ##
 ######################################
-function _func_rosclient() {
+function _func_rosdockerclient() {
     if [ -z "$1" ]; then
         echo "Input the Docker Conntener ID.'"
     else
@@ -18,28 +18,28 @@ function _func_rosclient() {
     env | grep "ROS_IP"
 }
 
-function _func_rosexit(){
+function _func_rosdockerexit(){
     export ROS_MASTER_URI=http://localhost:11311
     unset ROS_HOST_NAME
     unset ROS_IP
     export PS1="\u@\h:\w\\$ "
 }
 
-function _func_comp_rosaddress(){
+function _func_comp_rosdocker(){
     local cur=${COMP_WORDS[COMP_CWORD]}
     if [ "$COMP_CWORD" -eq 1 ]; then
         COMPREPLY=( $(compgen -W "client exit" -- $cur) )
     fi
 }
 
-function _func_rosaddress() {
+function _func_rosdocker() {
     # Get now eth0 or wlan0 IP address
     if [ $1 = "exit" ]; then
-        _func_rosexit
+        _func_rosdockerexit
     elif [ $1 = "client" ]; then
-        _func_rosclient $2
+        _func_rosdockerclient $2
     fi
 }
 
-alias rosdocker=_func_rosaddress
-complete -o default -F _func_comp_rosaddress rosdocker
+alias rosdocker=_func_rosdocker
+complete -o default -F _func_comp_rosdocker rosdocker
