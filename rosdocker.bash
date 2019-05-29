@@ -1,16 +1,26 @@
+
 #!/bin/bash
-######################################
-## 引数に取得したいコンテナIDが必要 ##
-######################################
+function _func_rosdockerserver() {
+    pc_addr=$(ip -f inet -o addr show docker0|cut -d\  -f 7 | cut -d/ -f 1)
+    # pc_addr=$(ifconfig | grep 'inet addr:' | grep -v '127.0.0.1' | awk -F: '{print $2}' | awk '{print $1}' | head -1)
+	export ROS_MASTER_URI=http://${pc_addr}:11311
+	export ROS_HOST_NAME=${pc_addr}
+	export ROS_IP=${pc_addr}
+	export PS1="\[\033[41;1;33m\]<ROS_server>\[\033[0m\]\w$ "
+
+	env | grep "ROS_MASTER_URI"
+	env | grep "ROS_HOST_NAME"
+	env | grep "ROS_IP"
+}
+
 function _func_rosdockerclient() {
     if [ -z "$1" ]; then
         echo "Input the Docker Conntener ID.'"
     else
-        docker_addr=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $1)
-        client_addr=$(ifconfig | grep 'inet addr:' | grep -v '127.0.0.1' | awk -F: '{print $2}' | awk '{print $1}' | head -1)
-        export ROS_MASTER_URI=http://${docker_addr}:11311
-        export ROS_HOST_NAME=${client_addr}
-        export ROS_IP=${client_addr}
+        pc_addr=$(ifconfig | grep 'inet addr:' | grep -v '127.0.0.1' | awk -F: '{print $2}' | awk '{print $1}' | head -1)
+        export ROS_MASTER_URI=http://$1:11311
+        export ROS_HOST_NAME=${pc_addr}
+        export ROS_IP=${pc_addr}
         export PS1="\[\033[44;1;33m\]<ROS_Docker_client>\[\033[0m\]\w$ "
     fi
     env | grep "ROS_MASTER_URI"
@@ -28,7 +38,7 @@ function _func_rosdockerexit(){
 function _func_comp_rosdocker(){
     local cur=${COMP_WORDS[COMP_CWORD]}
     if [ "$COMP_CWORD" -eq 1 ]; then
-        COMPREPLY=( $(compgen -W "client exit" -- $cur) )
+        COMPREPLY=( $(compgen -W "server client exit" -- $cur) )
     fi
 }
 
@@ -36,6 +46,8 @@ function _func_rosdocker() {
     # Get now eth0 or wlan0 IP address
     if [ $1 = "exit" ]; then
         _func_rosdockerexit
+    elif [ $1 = "server" ]; then
+        _func_rosdockerserver
     elif [ $1 = "client" ]; then
         _func_rosdockerclient $2
     fi
