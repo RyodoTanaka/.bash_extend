@@ -7,5 +7,5 @@ else
 fi
 
 source /opt/ros/$version/setup.bash
-export ROS_PARALLEL_JOBS=-j`nproc`
+export ROS_PARALLEL_JOBS=-j$((`nproc`-1))
 source `catkin locate --shell-verbs`
