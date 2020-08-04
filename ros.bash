@@ -10,7 +10,7 @@ function catkin-compile-commands-json() {
         echo catkin config does not include -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         (
             cd "${catkin_ws}" &&
-                catkin config -a --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+                catkin config -a --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -std=c++17
         )
     fi
     # Run catkin build in order to run cmake and generate compile_commands.json
