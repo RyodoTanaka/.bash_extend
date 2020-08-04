@@ -1,5 +1,21 @@
 #!/bin/bash
 
+if [ -n "$1" ]; then
+    version=$1
+else
+    version="kinetic"
+fi
+
+source /opt/ros/$version/setup.bash
+export ROS_PARALLEL_JOBS=-j$((`nproc`-1))
+source `catkin locate --shell-verbs`
+
+# For colcon to generate compile_commands.json
+if [ ! -f ~/.local/bin/colcon_lncc ]; then
+    pushd ~/.local/bin && wget https://raw.githubusercontent.com/youtalk/colcon_lncc/master$SHELL/colcon_lncc && chmod 755 colcon_lncc && popd
+fi
+
+# For catkin-tools to generate compile_commands.json
 function catkin-compile-commands-json() {
     local catkin_ws=$(echo $CMAKE_PREFIX_PATH | cut -d: -f1)/..
     # Verify catkin cmake args contains -DCMAKE_EXPORT_COMPILE_COMMANDS=ON.
@@ -29,14 +45,3 @@ function catkin-compile-commands-json() {
         )
     done
 }
-
-
-if [ -n "$1" ]; then
-    version=$1
-else
-    version="kinetic"
-fi
-
-source /opt/ros/$version/setup.bash
-export ROS_PARALLEL_JOBS=-j$((`nproc`-1))
-source `catkin locate --shell-verbs`
