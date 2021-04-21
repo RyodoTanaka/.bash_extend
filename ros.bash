@@ -18,6 +18,9 @@ fi
 source ~/.rosaddress/rosaddress.bash
 
 # For colcon to generate compile_commands.json
+if [ ! -f ~/.local/bin ]; then
+    mkdir ~/.local/bin -p
+fi
 if [ ! -f ~/.local/bin/colcon_lncc ]; then
     pushd ~/.local/bin && wget https://raw.githubusercontent.com/youtalk/colcon_lncc/master$SHELL/colcon_lncc && chmod 755 colcon_lncc && popd
 fi
