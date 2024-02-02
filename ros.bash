@@ -6,6 +6,10 @@ else
     version="kinetic"
 fi
 
+# ROS version names
+ros1_versions=("kinetic" "melodic" "noetic")
+ros2_versions=("foxy" "humble")
+
 # For normal setup
 source /opt/ros/$version/setup.bash
 # For build core number be maximum
@@ -25,8 +29,13 @@ if [ ! -f ~/.local/bin/colcon_lncc ]; then
     pushd ~/.local/bin && wget https://raw.githubusercontent.com/youtalk/colcon_lncc/master$SHELL/colcon_lncc && chmod 755 colcon_lncc && popd
 fi
 
-# Enable catkin source command
-source `catkin locate --shell-verbs`
+for v in "${ros1_versions[@]}"; do
+    if [ "$version" == "$v" ]; then
+        # Enable catkin source command
+        source `catkin locate --shell-verbs`
+        break
+    fi
+done
 
 # For catkin-tools to generate compile_commands.json
 function catkin-compile-commands-json() {
